@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
@@ -16,6 +16,7 @@ import { Spinner } from '@/components/ui/spinner'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { update } = useSession()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -36,6 +37,8 @@ export default function LoginPage() {
         toast.error(result.error || 'Invalid credentials')
       } else {
         toast.success('Login successful!')
+        // Force session update to ensure navbar reflects login state
+        await update()
         router.push('/dashboard')
         router.refresh()
       }

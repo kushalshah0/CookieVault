@@ -51,8 +51,10 @@ export default function DashboardPage() {
   const isAdmin = session?.user?.role === 'admin' || session?.user?.role === 'superadmin'
 
   useEffect(() => {
-    fetchCookies()
-  }, [])
+    if (session) {
+      fetchCookies()
+    }
+  }, [session])
 
   useEffect(() => {
     if (searchQuery) {
@@ -75,7 +77,8 @@ export default function DashboardPage() {
         const data = await response.json()
         // Filter cookies based on user role
         const allCookies = data.cookies
-        const visibleCookies = isAdmin ? allCookies : allCookies.filter((c: Cookie) => c.isPublic)
+        const userIsAdmin = session?.user?.role === 'admin' || session?.user?.role === 'superadmin'
+        const visibleCookies = userIsAdmin ? allCookies : allCookies.filter((c: Cookie) => c.isPublic)
         setCookies(visibleCookies)
         setFilteredCookies(visibleCookies)
       } else {
@@ -257,10 +260,16 @@ export default function DashboardPage() {
                           <code className="text-xs break-all">{cookie.slug}</code>
                         </CardDescription>
                       </div>
-                      {cookie.isPublic && (
-                        <span className="flex-shrink-0 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
-                          Public
-                        </span>
+                      {isAdmin && (
+                        cookie.isPublic ? (
+                          <span className="flex-shrink-0 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                            Public
+                          </span>
+                        ) : (
+                          <span className="flex-shrink-0 rounded-full bg-red-500/10 px-2 py-1 text-xs font-semibold text-red-600 dark:text-red-400 border border-red-500/20">
+                            Private
+                          </span>
+                        )
                       )}
                     </div>
                   </CardHeader>
