@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import { useSession } from 'next-auth/react'
+import { useSessionContext } from '@/contexts/session-context'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { Button } from '@/components/ui/button'
@@ -33,7 +33,7 @@ interface Cookie {
 }
 
 export default function DashboardPage() {
-  const { data: session } = useSession()
+  const { session, status } = useSessionContext()
   const [cookies, setCookies] = useState<Cookie[]>([])
   const [filteredCookies, setFilteredCookies] = useState<Cookie[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -46,15 +46,18 @@ export default function DashboardPage() {
   const [isUsersListDialogOpen, setIsUsersListDialogOpen] = useState(false)
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false)
   const [viewingCookie, setViewingCookie] = useState<Cookie | null>(null)
+  const [hasFetched, setHasFetched] = useState(false)
   
   // Check if user is admin
   const isAdmin = session?.user?.role === 'admin' || session?.user?.role === 'superadmin'
 
   useEffect(() => {
-    if (session) {
+    // Only fetch once when session is authenticated
+    if (status === 'authenticated' && !hasFetched) {
       fetchCookies()
+      setHasFetched(true)
     }
-  }, [session])
+  }, [status, hasFetched])
 
   useEffect(() => {
     if (searchQuery) {
@@ -131,12 +134,12 @@ export default function DashboardPage() {
   }
 
   const handleSaveSuccess = () => {
-    fetchCookies()
+    fetchCookies() // Intentional refetch after save
     handleDialogClose()
   }
 
   const handleDeleteSuccess = () => {
-    fetchCookies()
+    fetchCookies() // Intentional refetch after delete
     handleDeleteDialogClose()
   }
 

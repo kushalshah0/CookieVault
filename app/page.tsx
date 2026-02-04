@@ -1,6 +1,6 @@
 "use client"
 
-import { useSession } from 'next-auth/react'
+import { useSessionContext } from '@/contexts/session-context'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 
 export default function Home() {
-  const { data: session, status } = useSession()
+  const { session, status } = useSessionContext()
   
   const features = [
     {

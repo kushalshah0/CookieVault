@@ -1,13 +1,14 @@
 "use client"
 
 import Link from 'next/link'
-import { useSession, signOut } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
+import { useSessionContext } from '@/contexts/session-context'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Cookie, LogOut, User } from 'lucide-react'
 
 export function Navbar() {
-  const { data: session } = useSession()
+  const { session } = useSessionContext()
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

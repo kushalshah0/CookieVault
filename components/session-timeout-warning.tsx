@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import { useSession } from 'next-auth/react'
+import { useSessionContext } from '@/contexts/session-context'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { AlertTriangle, X } from 'lucide-react'
@@ -10,7 +10,7 @@ const SESSION_DURATION = 60 * 60 * 1000 // 1 hour in milliseconds
 const WARNING_TIME = 5 * 60 * 1000 // Show warning 5 minutes before expiry
 
 export function SessionTimeoutWarning() {
-  const { data: session } = useSession()
+  const { session } = useSessionContext()
   const [showWarning, setShowWarning] = useState(false)
   const [timeLeft, setTimeLeft] = useState(0)
 
